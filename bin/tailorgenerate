@@ -149,7 +149,7 @@ function createApplication(app_name, path) {
   // sort dependencies like npm(1)
   pkg.dependencies = sortedObject(pkg.dependencies);
 
-  copy_template('config/.gitignore',          `${path}/.gitignore`);
+  copy_template('config/gitignore',      `${path}/.gitignore`);
   copy_template('components/Meta.js',    `${path}/components/Meta.js`)
   copy_template('pages/index.js',        `${path}/pages/index.js`);
   copy_template('config/.babelrc',        `${path}/.babelrc`);
