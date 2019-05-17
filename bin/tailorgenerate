@@ -176,7 +176,7 @@ function createApplication(app_name, path) {
   console.log('   Start your app:');
   console.log('   $ npm run dev');
   console.log();
-  console.log('   Tailove ❤️ 🚀\n\n’);
+  console.log('   Tailove ❤️\n\n’);
 }
 
 function copy_template(from, to) {
