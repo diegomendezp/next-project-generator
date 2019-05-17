@@ -11,37 +11,60 @@ const readline     = require('readline');
 const sortedObject = require('sorted-object');
 const util         = require('util');
 
-//let _exit = process.exit;
-let pkg = require('../package.json');
+var _exit = process.exit;
+var eol = os.EOL;
+var pkg = require('../package.json');
 
-let version = pkg.version;
+var version = pkg.version;
 
 // Re-assign process.exit because of commander
 // TODO: Switch to a different command framework
-//process.exit = exit
+process.exit = exit
 
+// CLI
+
+around(program, 'optionMissingArgument', function (fn, args) {
+  program.outputHelp()
+  fn.apply(this, args)
+  return { args: [], unknown: [] }
+})
+
+before(program, 'outputHelp', function () {
+  // track if help was shown for unknown option
+  this._helpShown = true
+});
+
+before(program, 'unknownOption', function () {
+  // allow unknown options if help was shown, to prevent trailing error
+  this._allowUnknownOption = this._helpShown
+
+  // show help if not yet shown
+  if (!this._helpShown) {
+    program.outputHelp()
+  }
+})
 
 program
   .version(version, '    --version')
   .usage('[options] [dir]')
-  .option('--next', 'adds next.js basic configuration')
+  .option(' --next', 'adds next.js basic configuration')
   .option('-f, --force', 'force on non-empty directory')
   .parse(process.argv);
 
-
-main();
-
+if (!exit.exited) {
+  main();
+}
 
 /**
  * Install an around function; AOP.
  */
 
-const around = (obj, method, fn) => {
-  let old = obj[method]
+function around(obj, method, fn) {
+  var old = obj[method]
 
   obj[method] = function () {
-    let args = new Array(arguments.length)
-    for (let i = 0; i < args.length; i++) args[i] = arguments[i]
+    var args = new Array(arguments.length)
+    for (var i = 0; i < args.length; i++) args[i] = arguments[i]
     return fn.call(this, old, args)
   }
 }
@@ -50,8 +73,8 @@ const around = (obj, method, fn) => {
  * Install a before function; AOP.
  */
 
-const before = (obj, method, fn) => {
-  let old = obj[method];
+function before(obj, method, fn) {
+  var old = obj[method];
 
   obj[method] = function () {
     fn.call(this);
@@ -63,8 +86,8 @@ const before = (obj, method, fn) => {
  * Prompt for confirmation on STDOUT/STDIN
  */
 
-const confirm =(msg, callback) => {
-  let rl = readline.createInterface({
+function confirm(msg, callback) {
+  var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
   });
@@ -81,9 +104,7 @@ const confirm =(msg, callback) => {
  * @param {String} path
  */
 
-const createApplication= (app_name, path) => {
-
-  
+function createApplication(app_name, path) {
 
   createDir(`${path}/components`);
   createDir(`${path}/content`);
@@ -155,20 +176,20 @@ const createApplication= (app_name, path) => {
   console.log('   Start your app:');
   console.log('   $ npm run dev');
   console.log();
-  console.log('   Tailove ❤️ 🚀\n\n');
+  console.log('   Tailove ❤️ 🚀\n\n’);;
 }
 
-const copy_template = (from, to) => {
+function copy_template(from, to) {
   from = path.join(__dirname, '..', 'templates', from);
   createFile(to, fs.readFileSync(from, 'utf-8'));
 }
 
-const loadTemplate = (name) => {
+function loadTemplate(name) {
   return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
 }
 
 // Create an app name from a directory path, fitting npm naming requirements.
-const createAppName = (pathName) => {
+function createAppName(pathName) {
   return path.basename(pathName)
     .replace(/[^A-Za-z0-9\.()!~*'-]+/g, '-')
     .replace(/^[-_\.]+|-+$/g, '')
@@ -176,11 +197,11 @@ const createAppName = (pathName) => {
 }
 
 // Graceful exit for async STDIO
-const exit = (code) => {
+function exit(code) {
   function done() { if (!(draining--)) _exit(code); }
 
-  let draining = 0;
-  let streams = [process.stdout, process.stderr];
+  var draining = 0;
+  var streams = [process.stdout, process.stderr];
 
   exit.exited = true;
 
@@ -193,9 +214,9 @@ const exit = (code) => {
   done();
 }
 
-const main = () => {
-  let destinationPath = program.args.shift() || '.';
-  let appName = createAppName(path.resolve(destinationPath)) || 'hello-world'
+function main() {
+  var destinationPath = program.args.shift() || '.';
+  var appName = createAppName(path.resolve(destinationPath)) || 'hello-world'
 
   // Generate application
   if (fs.existsSync(destinationPath)) {
@@ -213,15 +234,15 @@ const main = () => {
 }
 
 // Display a warning similar to how errors are displayed by commander.
-const warning = (message) => {
+function warning(message) {
   console.error()
-  message.split('\n').forEach((line) => {
+  message.split('\n').forEach(function (line) {
     console.error('  warning: %s', line)
   })
   console.error()
 }
 
-const createFile = (path, str) => {
+function createFile(path, str) {
   try {
     fs.writeFileSync(path, str, { mode: 0o666 });
     console.log('   \x1b[36mcreate\x1b[0m file : ' + path);
@@ -230,7 +251,7 @@ const createFile = (path, str) => {
   }
 }
 
-const createDir = (path) => {
+function createDir(path) {
   try {
     fs.mkdirsSync(path);
     console.log('   \033[36mcreate\033[0m dir  : ' + path);
