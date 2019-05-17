@@ -103,7 +103,7 @@ const confirm =(msg, callback) => {
  * @param {String} path
  */
 
-createApplication(app_name, path) {
+const createApplication= (app_name, path) => {
 
   
 
