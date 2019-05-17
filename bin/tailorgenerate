@@ -11,37 +11,15 @@ const readline     = require('readline');
 const sortedObject = require('sorted-object');
 const util         = require('util');
 
-
+//let _exit = process.exit;
 let pkg = require('../package.json');
 
 let version = pkg.version;
 
 // Re-assign process.exit because of commander
 // TODO: Switch to a different command framework
-process.exit = exit
+//process.exit = exit
 
-// CLI
-
-around(program, 'optionMissingArgument', function (fn, args) {
-  program.outputHelp()
-  fn.apply(this, args)
-  return { args: [], unknown: [] }
-})
-
-before(program, 'outputHelp', function () {
-  // track if help was shown for unknown option
-  this._helpShown = true
-});
-
-before(program, 'unknownOption', function () {
-  // allow unknown options if help was shown, to prevent trailing error
-  this._allowUnknownOption = this._helpShown
-
-  // show help if not yet shown
-  if (!this._helpShown) {
-    program.outputHelp()
-  }
-})
 
 program
   .version(version, '    --version')
