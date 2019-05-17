@@ -11,7 +11,7 @@ const readline     = require('readline');
 const sortedObject = require('sorted-object');
 const util         = require('util');
 
-let _exit = process.exit;
+
 let pkg = require('../package.json');
 
 let version = pkg.version;
