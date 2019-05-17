@@ -28,9 +28,9 @@ program
   .option('-f, --force', 'force on non-empty directory')
   .parse(process.argv);
 
-if (!exit.exited) {
-  main();
-}
+
+main();
+
 
 /**
  * Install an around function; AOP.
