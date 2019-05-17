@@ -1,0 +1,262 @@
+#!/usr/bin/env node
+const chalk        = require('chalk');
+const exec         = require('child_process').execSync;
+const fs           = require('fs-extra')
+const mkdirp       = require('mkdirp');
+const os           = require('os');
+const path         = require('path');
+const nodePath     = path;
+const program      = require('commander');
+const readline     = require('readline');
+const sortedObject = require('sorted-object');
+const util         = require('util');
+
+let _exit = process.exit;
+let pkg = require('../package.json');
+
+let version = pkg.version;
+
+// Re-assign process.exit because of commander
+// TODO: Switch to a different command framework
+process.exit = exit
+
+// CLI
+
+around(program, 'optionMissingArgument', function (fn, args) {
+  program.outputHelp()
+  fn.apply(this, args)
+  return { args: [], unknown: [] }
+})
+
+before(program, 'outputHelp', function () {
+  // track if help was shown for unknown option
+  this._helpShown = true
+});
+
+before(program, 'unknownOption', function () {
+  // allow unknown options if help was shown, to prevent trailing error
+  this._allowUnknownOption = this._helpShown
+
+  // show help if not yet shown
+  if (!this._helpShown) {
+    program.outputHelp()
+  }
+})
+
+program
+  .version(version, '    --version')
+  .usage('[options] [dir]')
+  .option('--next', 'adds next.js basic configuration')
+  .option('-f, --force', 'force on non-empty directory')
+  .parse(process.argv);
+
+if (!exit.exited) {
+  main();
+}
+
+/**
+ * Install an around function; AOP.
+ */
+
+const around = (obj, method, fn) => {
+  let old = obj[method]
+
+  obj[method] = function () {
+    let args = new Array(arguments.length)
+    for (let i = 0; i < args.length; i++) args[i] = arguments[i]
+    return fn.call(this, old, args)
+  }
+}
+
+/**
+ * Install a before function; AOP.
+ */
+
+const before = (obj, method, fn) => {
+  let old = obj[method];
+
+  obj[method] = function () {
+    fn.call(this);
+    old.apply(this, arguments);
+  };
+}
+
+/**
+ * Prompt for confirmation on STDOUT/STDIN
+ */
+
+const confirm =(msg, callback) => {
+  let rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  rl.question(msg, function (input) {
+    rl.close();
+    callback(/^y|yes|ok|true$/i.test(input));
+  });
+}
+
+/**
+ * Create application at the given directory `path`.
+ *
+ * @param {String} path
+ */
+
+createApplication(app_name, path) {
+
+  
+
+  createDir(`${path}/components`);
+  createDir(`${path}/content`);
+  createDir(`${path}/static`);
+  createDir(`${path}/static/img`);
+  createDir(`${path}/static/svg`);
+  createDir(`${path}/static/fonts`);
+  createDir(`${path}/pages`);
+  createDir(`${path}/styles`);
+  createDir(`${path}/styles/fontsStyles`);
+  createDir(`${path}/styles/pagesStyles`);
+
+
+  // package.json
+  let pkg = {
+    name: app_name,
+    version: '0.0.0',
+    private: true,
+    "scripts": {
+      "dev": "next",
+      "build": "next build",
+      "start": "next start -p $PORT",
+      "heroku-postbuild": "npm run build",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+      "@zeit/next-css": "^1.0.1",
+      "babel-plugin-styled-components": "^1.10.0",
+      "global": "^4.3.2",
+      "next": "^8.0.3",
+      "next-compose": "^0.0.2",
+      "next-compose-plugins": "^2.1.1",
+      "next-fonts": "^0.17.0",
+      "next-images": "^1.1.1",
+      "react": "^16.8.4",
+      "react-dom": "^16.8.4",
+      "styled-components": "^4.1.3",
+    },
+  }
+
+
+  // sort dependencies like npm(1)
+  pkg.dependencies = sortedObject(pkg.dependencies);
+
+  copy_template('config/gitignore',          `${path}/.gitignore`);
+  copy_template('components/Meta.js',    `${path}/components/Meta.js`)
+  copy_template('pages/index.js',        `${path}/pages/index.js`);
+  copy_template('config/.babelrc',        `${path}/.babelrc`);
+  copy_template('config/next.config.js',  `${path}/next.config.js`);
+
+
+  createFile(`${path}/package.json`, JSON.stringify(pkg, null, 2) + '\n');
+
+  process.chdir(path);
+
+  if (program.git) {
+    console.log('\n > Creating a git repository and commiting all your files\n');
+    exec('git init && git add . && git commit -m "initial commit"', { stdio: 'inherit' });
+  }
+
+  console.log('\n > Installing NPM packages. Please wait ⚡️\n');
+
+  exec('npm install', { stdio: 'inherit' });
+
+
+
+  console.log();
+  console.log('   Start your next project');
+  console.log('   Start your app:');
+  console.log('   $ npm run dev');
+  console.log();
+  console.log('   Tailove ❤️ 🚀\n\n');
+}
+
+const copy_template = (from, to) => {
+  from = path.join(__dirname, '..', 'templates', from);
+  createFile(to, fs.readFileSync(from, 'utf-8'));
+}
+
+const loadTemplate = (name) => {
+  return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
+}
+
+// Create an app name from a directory path, fitting npm naming requirements.
+const createAppName = (pathName) => {
+  return path.basename(pathName)
+    .replace(/[^A-Za-z0-9\.()!~*'-]+/g, '-')
+    .replace(/^[-_\.]+|-+$/g, '')
+    .toLowerCase()
+}
+
+// Graceful exit for async STDIO
+const exit = (code) => {
+  function done() { if (!(draining--)) _exit(code); }
+
+  let draining = 0;
+  let streams = [process.stdout, process.stderr];
+
+  exit.exited = true;
+
+  streams.forEach(function(stream){
+    // submit empty write request and wait for completion
+    draining += 1;
+    stream.write('', done);
+  });
+
+  done();
+}
+
+const main = () => {
+  let destinationPath = program.args.shift() || '.';
+  let appName = createAppName(path.resolve(destinationPath)) || 'hello-world'
+
+  // Generate application
+  if (fs.existsSync(destinationPath)) {
+    if (program.force) {
+      createApplication(appName, destinationPath);
+    } else {
+      confirm('destination is not empty, continue? [y/N] ', ok => {
+        if (ok) { createApplication(appName, destinationPath); }
+        else    { console.error('aborting'); exit(1); }
+      });
+    }
+  } else {
+    createApplication(appName, destinationPath);
+  }
+}
+
+// Display a warning similar to how errors are displayed by commander.
+const warning = (message) => {
+  console.error()
+  message.split('\n').forEach((line) => {
+    console.error('  warning: %s', line)
+  })
+  console.error()
+}
+
+const createFile = (path, str) => {
+  try {
+    fs.writeFileSync(path, str, { mode: 0o666 });
+    console.log('   \x1b[36mcreate\x1b[0m file : ' + path);
+  } catch(err) {
+    console.error(err);
+  }
+}
+
+const createDir = (path) => {
+  try {
+    fs.mkdirsSync(path);
+    console.log('   \033[36mcreate\033[0m dir  : ' + path);
+  } catch(err) {
+    console.error(err);
+  }
+}

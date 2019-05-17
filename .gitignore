@@ -1,0 +1,6 @@
+node_modules/
+temp/
+npm-debug.log
+.vscode/
+.DS_Store
+.next/

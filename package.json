@@ -1,0 +1,33 @@
+{
+  "name": "tailor_generator",
+  "version": "1.0.0",
+  "keywords": [
+    "next",
+    "framework",
+    "web",
+    "tailor"
+  ],
+  "description": "",
+  "main": "bin/tailorgenerate",
+  "preferGlobal": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "commander": "2.11.0",
+    "fs-extra": "^4.0.2",
+    "chalk": "^2.3.0",
+    "sorted-object": "2.0.1",
+    "mkdirp": "0.5.1"
+  },
+  "author": "Tailor Hub <hola@tailor-hub.com>",
+  "license": "MIT",
+  "files": [
+    "LICENSE",
+    "bin/",
+    "templates/"
+  ],
+  "engines": {
+    "node": ">= 0.10"
+  }
+}
