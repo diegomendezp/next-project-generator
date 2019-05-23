@@ -7,7 +7,7 @@
     "web",
     "tailor"
   ],
-  "description": "",
+  "description": "Tailor Next.js application generator with Styled-components",
   "main": "bin/tailorgenerate",
   "preferGlobal": true,
   "scripts": {
