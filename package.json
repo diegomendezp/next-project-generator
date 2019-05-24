@@ -5,7 +5,9 @@
     "next",
     "framework",
     "web",
-    "tailor"
+    "tailor",
+    "styled-components",
+    "next.js"
   ],
   "description": "Tailor Next.js application generator with Styled-components",
   "main": "bin/tailorgenerate",
