@@ -180,7 +180,7 @@ function createApplication(app_name, path) {
     createDir(`${path}/static/locales/en`);
     copy_template('config/i18n.js',  `${path}/i18n.js`);
     copy_template('config/server.js',  `${path}/server.js`);
-    copy_template('config/index.js',  `${path}/i18n.js`);
+    copy_template('config/index.js',  `${path}/index.js`);
   }
 
 
