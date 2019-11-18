@@ -181,6 +181,7 @@ function createApplication(app_name, path) {
     copy_template('config/i18n.js',  `${path}/i18n.js`);
     copy_template('config/server.js',  `${path}/server.js`);
     copy_template('config/index.js',  `${path}/index.js`);
+    copy_template('pages/_app.js', `${path}/pages/_app.js`);
   }
 
 
@@ -190,6 +191,7 @@ function createApplication(app_name, path) {
   copy_template('config/gitignore',      `${path}/.gitignore`);
   copy_template('components/Meta.js',    `${path}/components/Meta.js`)
   copy_template('pages/index.js',        `${path}/pages/index.js`);
+  copy_template('pages/_document.js',     `${path}/pages/_document.js`);
   copy_template('config/.babelrc',        `${path}/.babelrc`);
   copy_template('config/next.config.js',  `${path}/next.config.js`);
 
