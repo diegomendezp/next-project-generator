@@ -1,4 +1,4 @@
-# [Tailor](https://tailor-hub.com/) [Next.js](https://nextjs.org/) application generator with [Styled-components](https://www.styled-components.com/).
+# [Tailor](https://tailor-hub.com/) [Next.js](https://nextjs.org/) application generator with [Styled-components](https://www.styled-components.com/) & [i18n](https://github.com/isaachinman/next-i18next) translation module.
 
 ![Logo](https://res.cloudinary.com/practicaldev/image/fetch/s--uvGXwDgY--/c_imagga_scale,f_auto,fl_progressive,h_500,q_auto,w_1000/https://thepracticaldev.s3.amazonaws.com/i/bc0h3lav5bvg04pn5mxv.png)
 
@@ -68,6 +68,7 @@ This generator can also be further configured with the following command line fl
 
     -h, --help           output usage information
         --git            initialise a Git project
+        --i18n           i18n translation module configuration
 
 ## License
 

@@ -48,6 +48,8 @@ program
   .version(version, '    --version')
   .usage('[options] [dir]')
   .option(' --next', 'adds next.js basic configuration')
+  .option(' --git', 'adds git basic configuration')
+  .option(' --i18n', 'adds i18n translation module basic configuration')
   .option('-f, --force', 'force on non-empty directory')
   .parse(process.argv);
 
@@ -141,8 +143,44 @@ function createApplication(app_name, path) {
       "next-images": "^1.1.1",
       "react": "^16.8.4",
       "react-dom": "^16.8.4",
-      "styled-components": "^4.1.3",
+      "styled-components": "^4.1.3"
     },
+  }
+
+  if(program.i18n) {
+    pkg = {
+      name: app_name,
+      version: '0.0.0',
+      private: true,
+      "scripts": {
+        "dev": "next",
+        "build": "node index.js",
+        "start": "next start -p $PORT",
+        "heroku-postbuild": "npm run build",
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "dependencies": {
+        "@zeit/next-css": "^1.0.1",
+        "babel-plugin-styled-components": "^1.10.0",
+        "global": "^4.3.2",
+        "next": "^8.0.3",
+        "next-compose": "^0.0.2",
+        "next-compose-plugins": "^2.1.1",
+        "next-fonts": "^0.17.0",
+        "next-images": "^1.1.1",
+        "react": "^16.8.4",
+        "react-dom": "^16.8.4",
+        "styled-components": "^4.1.3",
+        "next-i18next": "^0.52.1",
+        "express": "^4.17.1"
+      },
+    }
+    createDir(`${path}/static/locales`);
+    createDir(`${path}/static/locales/es`);
+    createDir(`${path}/static/locales/en`);
+    copy_template('config/i18n.js',  `${path}/i18n.js`);
+    copy_template('config/server.js',  `${path}/server.js`);
+    copy_template('config/index.js',  `${path}/i18n.js`);
   }
 
 
