@@ -10,5 +10,8 @@ module.exports = new NextI18Next({
   initImmediate: true,
   preload: ['es', 'en'],
   localePath: 'static/locales',
-  localeSubpaths: 'foreign',
+  localeSubpaths: {
+    es: 'es',
+    en: 'en'
+  },
 });
