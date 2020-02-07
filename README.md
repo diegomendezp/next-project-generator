@@ -15,6 +15,11 @@ Install `tailor_next_generator` as a global NPM package, so you can run it from 
 $ npm install -g tailor_next_generator
 ```
 
+Or use `npx`;
+```sh
+$ npx tailor_next_generator new-project/
+```
+
 ## Quick Start
 
 The quickest way to get started with next.js is to utilize the executable `tailorgenerate(1)` to generate an application as shown below:
