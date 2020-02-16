@@ -171,6 +171,7 @@ function createApplication(app_name, path) {
     copy_template('config/index.js',  `${path}/index.js`);
     copy_template('pages/_app.js', `${path}/pages/_app.js`);
     copy_template('config/home.json', `${path}/static/locales/es/home.json`);
+    copy_template('config/home.json', `${path}/static/locales/en/home.json`);
   }
 
   if(program.type) {
@@ -200,10 +201,10 @@ function createApplication(app_name, path) {
     copy_template('pages/index.js',        `${path}/pages/index.js`);
     copy_template('pages/_document.js',     `${path}/pages/_document.js`);
   }
-  
+
   // sort dependencies like npm(1)
   pkg.dependencies = sortedObject(pkg.dependencies);
-  
+
   copy_template('config/gitignore',      `${path}/.gitignore`);
   copy_template('config/.babelrc',        `${path}/.babelrc`);
   copy_template('config/next.config.js',  `${path}/next.config.js`);
