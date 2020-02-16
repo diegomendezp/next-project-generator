@@ -9,6 +9,7 @@ const Meta = () => {
         <title>Tailor</title>
       </Head>
       <style jsx global>{`
+        // Write your fonts here
         // @font-face {
         // }
 
