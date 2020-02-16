@@ -1,6 +1,6 @@
 {
   "name": "tailor_next_generator",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "keywords": [
     "next",
     "framework",
@@ -9,7 +9,8 @@
     "styled-components",
     "next.js",
     "i18n",
-    "next-i18next"
+    "next-i18next",
+    "next-typescript"
   ],
   "description": "Tailor Next.js application generator with Styled-components & i18n translation module",
   "main": "bin/tailorgenerate",

@@ -1,6 +1,7 @@
+import React from "react";
 import Head from "next/head";
 
-const Meta = () => {
+const Meta: React.FunctionComponent = () => {
   return (
     <React.Fragment>
       <Head>

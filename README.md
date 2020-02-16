@@ -74,6 +74,7 @@ This generator can also be further configured with the following command line fl
     -h, --help           output usage information
         --git            initialise a Git project
         --i18n           i18n translation module configuration
+        --type           typescript configuration 
 
 ## License
 
