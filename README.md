@@ -15,7 +15,7 @@ Install `tailor_next_generator` as a global NPM package, so you can run it from 
 $ npm install -g tailor_next_generator
 ```
 
-Or use `npx`;
+Or use `npx`:
 ```sh
 $ npx tailor_next_generator new-project/
 ```

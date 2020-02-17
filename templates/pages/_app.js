@@ -7,11 +7,7 @@ class MyApp extends App {
     i18n.language ? (i18n.language = i18n.language) : "es";
     const { Component, pageProps } = this.props;
     return (
-     
-        <Container>
-          <Component {...pageProps} />
-        </Container>
-  
+      <Component {...pageProps} />
     );
   }
 }
